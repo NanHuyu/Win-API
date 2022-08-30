@@ -1,0 +1,46 @@
+#include<Windows.h>
+
+//2，窗口处理函数，处理消息
+LRESULT CALLBACK WndProc(HWND hwnd, UINT msgID, WPARAM wParam, LPARAM lParam) {
+	switch (msgID) {
+	case WM_DESTROY:
+		PostQuitMessage(0);//退出窗口时将其销毁
+		break;
+	}
+	return DefWindowProc(hwnd, msgID, wParam, lParam);
+ }
+
+//1，入口函数
+int WinMain(HINSTANCE hIns, HINSTANCE hPreIns, LPSTR lpCmdLine, int nCmdShow) {
+//3，注册窗口类
+	WNDCLASS wc = { 0 };//定义WNDCLASS结构体并置零
+	wc.cbClsExtra = 0;//申请缓冲区1，一般为0
+	wc.cbWndExtra = 0;//申请缓冲区2，一般为0
+	wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);//背景色
+	wc.hCursor = NULL;//窗口鼠标样式
+	wc.hIcon = NULL;//默认图标
+	wc.hInstance = hIns;//句柄
+	wc.lpfnWndProc = WndProc;//为窗口函数赋值
+	wc.lpszClassName = TEXT("啥也不是") ;//窗口名
+	wc.lpszMenuName = NULL;//窗口选项名，菜单
+	wc.style = CS_HREDRAW | CS_VREDRAW;//指定窗口类型，当窗口水平或竖直发生变化时强行重绘
+	RegisterClass(&wc);//注册窗口类，将以上WNDCLASS的所有参数写入内存中
+//4,创建窗口，申请内存，存入数据
+	HWND hWnd=CreateWindow(TEXT("啥也不是"),TEXT("我是标题栏"),WS_OVERLAPPEDWINDOW,200,200,640,480,NULL,NULL,hIns,NULL );
+	/*
+	HWND 参数名=CreateWindow(11个参数):
+	1，窗口名，需与上面相同；2，标题栏信息，名称；3，创建窗口的基本风格;4,位置1；5，位置2,6，宽；7，高；
+	8，父窗口，不存在则NULL，9，菜单栏，无则NULL；10，当前程序实例句柄，hIs；11，没啥存在感的参数，直接NULL
+	*/
+//画窗口
+	ShowWindow(hWnd,SW_SHOW);//SW_SHOW：原样显示
+	UpdateWindow(hWnd);//窗口可刷新
+//消息循环
+	MSG nMsg = {0};//保存GetMessage（）抓取的消息
+	while (GetMessage(&nMsg, NULL, 0, 0))//GetMessage(&nMsg,NULL,0,0)//剩余三个参数没啥用，
+	{
+		TranslateMessage(&nMsg);//翻译消息
+		DispatchMessageW(&nMsg);//派发消息，将消息交给前面定义的窗口处理函数
+	}
+	return 0;
+}
